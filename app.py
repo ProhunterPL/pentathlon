@@ -19,7 +19,7 @@ MAX_REPS = {
 EXERCISE_DESCRIPTIONS = {
     "Clean": "Podrzut kettlebell do rack position. Max powtórzeń: 120.\n\nClean: Lifting the kettlebell to the rack position. Max reps: 120.",
     "Long Cycle Press": "Podrzut do rack, następnie wyciskanie. Max powtórzeń: 60.\n\nLong Cycle Press: Lifting to rack, then pressing. Max reps: 60.",
-    "Jerk": "WPodrzut kettlebell z rack po podwójnym ugięciu nóg. Max powtórzeń: 120.\n\nJerk: Driving the kettlebell up from the rack with leg assistance. Max reps: 120.",
+    "Jerk": "Podrzut kettlebell z rack po podwójnym ugięciu nóg. Max powtórzeń: 120.\n\nJerk: Driving the kettlebell up from the rack with leg assistance. Max reps: 120.",
     "Half Snatch": "Rwanie kettlebell nad głowę, zrzut do rack. Max powtórzeń: 108.\n\nHalf Snatch: Snatch the kettlebell overhead, lowering to rack. Max reps: 108.",
     "Strict Push Press": "Wyciskanie kettlebell pojedynyczym ugięciem kolan. Max powtórzeń: 120.\n\nStrict Push Press: Pressing the kettlebell with leg drive. Max reps: 120."
 }
@@ -39,15 +39,17 @@ for exercise in MAX_REPS.keys():
     points = weight * POINTS_PER_KG * reps
     volume = weight * reps
     results[exercise] = {"weight": weight, "reps": reps, "points": points, "volume": volume}
-
+# st.write(f"{exercise}: waga = {res['weight']}, powtórzenia = {res['reps']}, punkty = {res['points']}")
 # Obliczenia sumaryczne
+
 total_points = sum(res["points"] for res in results.values())
 total_volume = sum(res["volume"] for res in results.values())
 total_reps = sum(res["reps"] for res in results.values())
 
 # Wynik końcowy
+
 st.subheader("Podsumowanie wyników - Summary of results")
-st.write(f"**Łączna liczba punktów -Total points:** {total_points:.2f}")
+st.write(f"**Łączna liczba punktów - Total points:** {total_points / 2}")
 st.write(f"**Suma objętości (kg) -Total volume:** {total_volume}")
 st.write(f"**Łączna liczba powtórzeń - Total reps:** {total_reps}")
 
