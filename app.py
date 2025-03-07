@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Tabela przeliczeniowa punktów
 POINTS_PER_KG = 0.25
@@ -35,7 +36,8 @@ for exercise in MAX_REPS.keys():
     st.subheader(exercise)
     st.write(EXERCISE_DESCRIPTIONS[exercise])
     weight = st.selectbox(f"Wybierz wagę odważnika -Kettlebell weight (kg) - {exercise}", WEIGHTS, key=f"weight_{exercise}")
-    reps = st.number_input(f"Podaj liczbę powtórzeń -Enter reps- {exercise}", min_value=0, max_value=MAX_REPS[exercise], key=f"reps_{exercise}")
+    #reps = st.number_input(f"Podaj liczbę powtórzeń -Enter reps- {exercise}", min_value=0, max_value=MAX_REPS[exercise], key=f"reps_{exercise}")
+    reps = st.slider(f"Podaj liczbę powtórzeń - Enter reps - {exercise}", 0, MAX_REPS[exercise], key=f"reps_{exercise}")
     points = weight * POINTS_PER_KG * reps
     volume = weight * reps
     results[exercise] = {"weight": weight, "reps": reps, "points": points, "volume": volume}
@@ -57,12 +59,16 @@ st.write(f"**Łączna liczba powtórzeń - Total reps:** {total_reps}")
 st.subheader("Wizualizacja wyników")
 fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
+
 # Wykres punktów
-ax[0].bar(results.keys(), [res["points"] for res in results.values()], color='blue')
+
+ax[0].bar(results.keys(), [res["points"] / 2 for res in results.values()], color='blue')
 ax[0].set_title("Punkty za poszczególne boje")
-ax[0].set_ylabel("Punkty")
+ax[0].set_ylabel("Punkty- Points")
 ax[0].set_xlabel("Boje")
 ax[0].tick_params(axis='x', rotation=45)
+
+
 
 # Wykres objętości
 ax[1].bar(results.keys(), [res["volume"] for res in results.values()], color='green')
@@ -73,6 +79,63 @@ ax[1].tick_params(axis='x', rotation=45)
 
 st.pyplot(fig)
 
+fig_hbar, ax_hbar = plt.subplots(figsize=(8, 5))
+
+# Pobranie danych
+exercise_names = list(results.keys())
+user_reps = [res["reps"] for res in results.values()]
+max_reps = [MAX_REPS[exercise] for exercise in exercise_names]
+
+# Wykres słupkowy poziomy
+ax_hbar.barh(exercise_names, max_reps, color='lightgray', label="Max reps")
+ax_hbar.barh(exercise_names, user_reps, color='blue', label="Twoje reps")
+
+# Opis osi
+ax_hbar.set_xlabel("Liczba powtórzeń")
+ax_hbar.set_title("Porównanie Twoich powtórzeń z maksymalnymi")
+ax_hbar.legend()
+ax_hbar.invert_yaxis()  # Odwrócenie kolejności dla lepszej czytelności
+
+st.subheader("Ile brakowało do maksymalnych powtórzeń?")
+st.pyplot(fig_hbar)
+
+
+# Dane do wykresu
+categories = list(results.keys())
+values = [res["points"] / 2 for res in results.values()]  
+values += values[:1]  # Zamknięcie pętli wykresu
+
+angles = np.linspace(0, 2 * np.pi, len(categories), endpoint=False).tolist()
+angles += angles[:1]  # Zamknięcie pętli wykresu
+
+fig_radar, ax_radar = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+ax_radar.fill(angles, values, color='blue', alpha=0.3)
+ax_radar.plot(angles, values, color='blue', linewidth=2)
+ax_radar.set_xticks(angles[:-1])
+ax_radar.set_xticklabels(categories)
+
+st.subheader("Rozkład punktów na bojach (Wykres radarowy)")
+st.pyplot(fig_radar)
+
+fig_pie, ax_pie = plt.subplots(figsize=(6, 6))
+ax_pie.pie(
+    [res["points"] / 2 for res in results.values()],
+    labels=results.keys(),
+    autopct='%1.1f%%',
+    colors=['blue', 'green', 'red', 'purple', 'orange'],
+    startangle=90
+)
+ax_pie.set_title("Procentowy udział punktów w bojach")
+
+st.subheader("Procentowy udział punktów w bojach")
+st.pyplot(fig_pie)
+
+
+
 # Drugi obrazek na dole
 st.image("baner.jpg")
+
+df = pd.DataFrame(results).T  
+csv = df.to_csv(index=True).encode('utf-8')  
+st.download_button("Pobierz wyniki jako CSV", csv, "wyniki.csv", "text/csv")
 
