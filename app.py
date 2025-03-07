@@ -24,11 +24,8 @@ EXERCISE_DESCRIPTIONS = {
     "Strict Push Press": "Wyciskanie kettlebell pojedynyczym ugięciem kolan. Max powtórzeń: 120.\n\nStrict Push Press: Pressing the kettlebell with leg drive. Max reps: 120."
 }
 #Dodanie obrazka
-st.markdown("""
-    <a href="https://incoresports.eu" target="_blank">
-        <img src="logo.png" alt="Incore Sports" style="width:100%;">
-    </a>
-""", unsafe_allow_html=True)
+st.image("logo.png", width=200)
+
 
 st.title("Kalkulator pięcioboju kettlebell \n Kettlebell Pentathlon Score Calculator")
 
@@ -75,9 +72,5 @@ ax[1].tick_params(axis='x', rotation=45)
 st.pyplot(fig)
 
 # Drugi obrazek na dole
-st.markdown("""
-    <a href="https://incoresports.eu" target="_blank">
-        <img src="baner.jpg" alt="Incore Sports" style="width:100%;">
-    </a>
-""", unsafe_allow_html=True)
+st.image("baner.jpg")
 
